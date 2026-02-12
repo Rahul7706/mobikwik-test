@@ -1,0 +1,154 @@
+[
+  {
+    "test_name": "Token Generation API--Success Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v1/verify/retailer",
+    "request_body": {
+      "clientId": "",
+      "clientSecret": ""
+    },
+    "method": "POST",
+    "requires_token": false
+  },
+  {
+    "test_name": "Token Generation API--Failed Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v1/verify/retailer",
+    "request_body": {
+      "clientId": "",
+      "clientSecret": ""
+    },
+    "method": "POST",
+    "requires_token": false
+  },
+  {
+    "test_name": "Balance Check API - Success Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerBalance",
+    "request_body": { "memberId": "" },
+    "method": "POST"
+  },
+  {
+    "test_name": "Balance Check API - Failed Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerBalance",
+    "request_body": { "memberId": "abc@gmail.com" },
+    "method": "POST"
+  },
+  {
+    "test_name": "Validation API - Success Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerValidation",
+    "request_body": {
+      "amt": "100",
+      "cn": "9876876768",
+      "op": "7",
+      "cir": "1",
+      "planCode": "bsnl-Andhra-Pradesh-topup-plans-Rs-100.0",
+      "adParams": {}
+    },
+    "method": "POST"
+  },
+  {
+    "test_name": "Validation API - Failed Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerValidation",
+    "request_body": {
+      "amt": "10",
+      "cn": "8434625057",
+      "op": "140",
+      "cir": "22",
+      "planCode": "Vi-UP-WEST-Uttarakhand-121-made-for-you-Rs-1.0",
+      "adParams": {}
+    },
+    "method": "POST"
+  },
+  {
+    "test_name": "View Bill API - Success Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerViewbill",
+    "request_body": {
+      "cn": "151608882",
+      "op": "31",
+      "cir": "",
+      "adParams": {}
+    },
+    "method": "POST"
+  },
+  {
+    "test_name": "View Bill API - Failed Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerViewbill",
+    "request_body": {
+      "cn": "153734865",
+      "op": "32",
+      "cir": "",
+      "adParams": {}
+    },
+    "method": "POST"
+  },
+  {
+    "test_name": "Recharge API - Success Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerPayment",
+    "request_body": {
+      "cn": "9876543210",
+      "op": "7",
+      "cir": "",
+      "amt": "10",
+      "reqid": "tessjdk10321",
+      "remitterName": "P****na T****g",
+      "paymentRefID": "NX231107767681728991",
+      "paymentMode": "UPI",
+      "paymentAccountInfo": "1234567890@ybl"
+    },
+    "method": "POST"
+  },
+  {
+    "test_name": "Recharge API - Failed Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerPayment",
+    "request_body": {
+      "cn": "7797833489",
+      "op": "338",
+      "cir": "16",
+      "amt": "10",
+      "reqid": "test1234",
+      "remitterName": "<>",
+      "paymentRefID": "xxxx",
+      "paymentMode": "xxxx",
+      "paymentAccountInfo": "xxxx@ybl"
+    },
+    "method": "POST"
+  },
+  {
+    "test_name": "Transaction Status Check API - Failed Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerStatus",
+    "request_body": { "txId": "test1234" },
+    "method": "POST"
+  },
+  {
+    "test_name": "Recharge API - Pending Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerPayment",
+    "request_body": {
+      "cn": "9459738434",
+      "op": "3",
+      "cir": "",
+      "amt": "10",
+      "reqid": "test121212",
+      "remitterName": "xxxx",
+      "paymentRefID": "xxxx",
+      "paymentMode": "xxxx",
+      "paymentAccountInfo": "xxxx@ybl"
+    },
+    "method": "POST"
+  },
+  {
+    "test_name": "Transaction Status Check API - Success Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerStatus",
+    "request_body": { "txId": "tessjdk102" },
+    "method": "POST"
+  },
+  {
+    "test_name": "Transaction Status Check API - Failed Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerStatus",
+    "request_body": { "txId": "failedtesting12" },
+    "method": "POST"
+  },
+  {
+    "test_name": "Transaction Status Check API - Pending Cases",
+    "request_url": "https://alpha3.mobikwik.com/recharge/v3/retailerStatus",
+    "request_body": { "txId": "test121212" },
+    "method": "POST"
+  }
+]

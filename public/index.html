@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Test Automation Panel</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #0b1220;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      padding: 18px;
+      background: linear-gradient(90deg, #1e293b, #0f172a);
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1500px;
+      margin: auto;
+    }
+
+    .top-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 14px;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: 0.2s;
+      font-size: 14px;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .btn-add { background: #22c55e; color: white; }
+    .btn-save { background: #3b82f6; color: white; }
+    .btn-run { background: #f59e0b; color: black; }
+    .btn-runall { background: #ec4899; color: white; }
+    .btn-export { background: #8b5cf6; color: white; }
+    .btn-delete { background: #ef4444; color: white; }
+    .btn-clear { background: #64748b; color: white; }
+    .btn-sync { background: #0ea5e9; color: white; }
+
+    .card {
+      background: #111c33;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid #24324c;
+      margin-bottom: 15px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+    }
+
+    .card h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: #e2e8f0;
+    }
+
+    label {
+      font-size: 13px;
+      color: #cbd5e1;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #0b1220;
+      color: white;
+      font-size: 14px;
+      outline: none;
+    }
+
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: #111c33;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #24324c;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #24324c;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #1e293b;
+      font-size: 13px;
+      color: #e2e8f0;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-weight: bold;
+      display: inline-block;
+      font-size: 12px;
+    }
+
+    .badge-pass { background: #16a34a; color: white; }
+    .badge-fail { background: #dc2626; color: white; }
+    .badge-pending { background: #f59e0b; color: black; }
+    .badge-notrun { background: #475569; color: white; }
+
+    .response-box {
+      background: #0b1220;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow: auto;
+      border: 1px solid #24324c;
+    }
+
+    .small-btn {
+      padding: 8px 10px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    /* LOADER */
+    .loader-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #334155;
+      border-top: 6px solid #8b5cf6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      margin-top: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      color: #e2e8f0;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1e293b;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      box-shadow: 0px 0px 20px rgba(0,0,0,0.4);
+      display: none;
+      z-index: 99999;
+      max-width: 350px;
+    }
+
+    .toast.success { border-left: 5px solid #22c55e; }
+    .toast.error { border-left: 5px solid #ef4444; }
+
+    .toast p {
+      margin: 0;
+      font-size: 13px;
+      color: white;
+    }
+
+    @media(max-width: 900px) {
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>🚀 API Test Automation Panel (LocalStorage + Secure Login)</header>
+
+<div class="container">
+
+  <!-- GLOBAL SETTINGS -->
+  <div class="card">
+    <h3>🔑 Global Settings</h3>
+
+    <div class="settings-grid">
+      <div>
+        <label>Public Key (Required for Encrypted APIs)</label>
+        <textarea id="publicKey" placeholder="Paste your PUBLIC KEY here..."></textarea>
+      </div>
+
+      <div>
+        <label>Token (Auto Generated / Manual)</label>
+        <input id="globalToken" placeholder="Token will appear after running Token API..." />
+
+        <br><br>
+
+        <label>Search Test Case</label>
+        <input id="searchInput" placeholder="Search by test name..." onkeyup="renderTable()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="top-controls">
+    <div class="btn-group">
+      <button class="btn-add" onclick="addRow()">➕ Add Test</button>
+      <button class="btn-save" onclick="saveTestsToBackend()">💾 Save Backend</button>
+      <button class="btn-sync" onclick="syncFromBackend()">🔄 Sync Backend</button>
+      <button class="btn-runall" onclick="runAllTests()">⚡ Run All</button>
+      <button class="btn-export" onclick="exportDocx()">📄 Export DOCX</button>
+      <button class="btn-clear" onclick="clearResults()">🧹 Clear Results</button>
+      <button class="btn-delete" onclick="logout()">🚪 Logout</button>
+    </div>
+
+    <div>
+      <span id="summaryText" style="font-weight:bold;color:#cbd5e1;">
+        Total: 0 | PASS: 0 | FAIL: 0
+      </span>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 220px;">Test Name</th>
+        <th style="width: 250px;">Request URL</th>
+        <th style="width: 100px;">Method</th>
+        <th style="width: 250px;">Request Body</th>
+        <th style="width: 120px;">Token Required</th>
+        <th style="width: 120px;">Status</th>
+        <th style="width: 350px;">Response</th>
+        <th style="width: 180px;">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody id="testTable"></tbody>
+  </table>
+</div>
+
+<!-- LOADER -->
+<div id="loader" class="loader-overlay">
+  <div class="spinner"></div>
+  <div id="loaderText" class="loader-text">Running...</div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast">
+  <p id="toastMsg"></p>
+</div>
+
+<script>
+  let tests = [];
+  let results = [];
+
+  // LocalStorage Keys
+  const STORAGE_TESTS = "api_tests_data";
+  const STORAGE_RESULTS = "api_tests_results";
+  const STORAGE_TOKEN = "api_global_token";
+  const STORAGE_PUBLICKEY = "api_public_key";
+
+  function showLoader(text) {
+    document.getElementById("loaderText").innerText = text;
+    document.getElementById("loader").style.display = "flex";
+  }
+
+  function hideLoader() {
+    document.getElementById("loader").style.display = "none";
+  }
+
+  function showToast(message, isError = false) {
+    const toast = document.getElementById("toast");
+    const toastMsg = document.getElementById("toastMsg");
+
+    toastMsg.innerText = message;
+    toast.className = isError ? "toast error" : "toast success";
+    toast.style.display = "block";
+
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 3000);
+  }
+
+  function saveToLocalStorage() {
+    localStorage.setItem(STORAGE_TESTS, JSON.stringify(tests));
+    localStorage.setItem(STORAGE_RESULTS, JSON.stringify(results));
+    localStorage.setItem(STORAGE_TOKEN, document.getElementById("globalToken").value);
+    localStorage.setItem(STORAGE_PUBLICKEY, document.getElementById("publicKey").value);
+  }
+
+  function loadFromLocalStorage() {
+    const savedTests = localStorage.getItem(STORAGE_TESTS);
+    const savedResults = localStorage.getItem(STORAGE_RESULTS);
+
+    if (savedTests) tests = JSON.parse(savedTests);
+    if (savedResults) results = JSON.parse(savedResults);
+
+    const savedToken = localStorage.getItem(STORAGE_TOKEN);
+    const savedPublicKey = localStorage.getItem(STORAGE_PUBLICKEY);
+
+    if (savedToken) document.getElementById("globalToken").value = savedToken;
+    if (savedPublicKey) document.getElementById("publicKey").value = savedPublicKey;
+  }
+
+  async function syncFromBackend() {
+    showLoader("Syncing test cases from backend...");
+
+    const res = await fetch("/api/tests");
+    const json = await res.json();
+
+    hideLoader();
+
+    if (json.success) {
+      tests = json.data.map(t => ({
+        ...t,
+        requires_token: t.requires_token ?? true,
+        status: "NOT RUN",
+        response: ""
+      }));
+
+      results = [];
+      saveToLocalStorage();
+      renderTable();
+
+      showToast("✅ Synced from backend successfully!");
+    } else {
+      showToast("❌ Backend sync failed!", true);
+    }
+  }
+
+  async function saveTestsToBackend() {
+    showLoader("Saving test cases to backend...");
+
+    const cleaned = tests.map(({ status, response, ...rest }) => rest);
+
+    const res = await fetch("/api/tests/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cleaned)
+    });
+
+    const json = await res.json();
+    hideLoader();
+
+    if (json.success) {
+      saveToLocalStorage();
+      showToast("✅ Saved to backend successfully!");
+    } else {
+      showToast("❌ Save to backend failed!", true);
+    }
+  }
+
+  function getBadge(status) {
+    if (status === "PASS") return `<span class="badge badge-pass">PASS</span>`;
+    if (status === "FAIL") return `<span class="badge badge-fail">FAIL</span>`;
+    if (status === "RUNNING...") return `<span class="badge badge-pending">RUNNING</span>`;
+    if (status === "NOT RUN") return `<span class="badge badge-notrun">NOT RUN</span>`;
+    return `<span class="badge badge-pending">${status}</span>`;
+  }
+
+  function updateSummary() {
+    let pass = 0;
+    let fail = 0;
+
+    tests.forEach(t => {
+      if (t.status === "PASS") pass++;
+      if (t.status === "FAIL") fail++;
+    });
+
+    document.getElementById("summaryText").innerText =
+      `Total: ${tests.length} | PASS: ${pass} | FAIL: ${fail}`;
+  }
+
+  function renderTable() {
+    const table = document.getElementById("testTable");
+    const search = document.getElementById("searchInput").value.toLowerCase();
+
+    table.innerHTML = "";
+
+    tests.forEach((t, index) => {
+      if (!t.test_name.toLowerCase().includes(search)) return;
+
+      table.innerHTML += `
+        <tr>
+          <td>
+            <input value="${t.test_name}"
+              onchange="updateField(${index}, 'test_name', this.value)" />
+          </td>
+
+          <td>
+            <input value="${t.request_url}"
+              onchange="updateField(${index}, 'request_url', this.value)" />
+          </td>
+
+          <td>
+            <select onchange="updateField(${index}, 'method', this.value)">
+              <option value="GET" ${t.method === "GET" ? "selected" : ""}>GET</option>
+              <option value="POST" ${t.method === "POST" ? "selected" : ""}>POST</option>
+              <option value="PUT" ${t.method === "PUT" ? "selected" : ""}>PUT</option>
+              <option value="DELETE" ${t.method === "DELETE" ? "selected" : ""}>DELETE</option>
+            </select>
+          </td>
+
+          <td>
+            <textarea onchange="updateBody(${index}, this.value)">${JSON.stringify(t.request_body, null, 2)}</textarea>
+          </td>
+
+          <td>
+            <select onchange="updateField(${index}, 'requires_token', this.value === 'true')">
+              <option value="true" ${t.requires_token ? "selected" : ""}>YES</option>
+              <option value="false" ${!t.requires_token ? "selected" : ""}>NO</option>
+            </select>
+          </td>
+
+          <td>${getBadge(t.status)}</td>
+
+          <td>
+            <div class="response-box">${t.response || ""}</div>
+          </td>
+
+          <td>
+            <button class="btn-run small-btn" onclick="runSingleTest(${index})">▶ Run</button>
+            <button class="btn-delete small-btn" onclick="deleteRow(${index})">🗑 Delete</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    updateSummary();
+    saveToLocalStorage();
+  }
+
+  function updateField(index, field, value) {
+    tests[index][field] = value;
+    saveToLocalStorage();
+  }
+
+  function updateBody(index, value) {
+    try {
+      tests[index].request_body = JSON.parse(value);
+      saveToLocalStorage();
+    } catch (err) {
+      showToast("❌ Invalid JSON in Request Body", true);
+    }
+  }
+
+  function addRow() {
+    tests.push({
+      test_name: "New Test Case",
+      request_url: "https://example.com/api",
+      request_body: {},
+      method: "POST",
+      requires_token: true,
+      status: "NOT RUN",
+      response: ""
+    });
+
+    renderTable();
+    showToast("➕ New test added!");
+  }
+
+  function deleteRow(index) {
+    tests.splice(index, 1);
+    results.splice(index, 1);
+    renderTable();
+    showToast("🗑 Test deleted!");
+  }
+
+  function clearResults() {
+    tests.forEach(t => {
+      t.status = "NOT RUN";
+      t.response = "";
+    });
+
+    results = [];
+    renderTable();
+    showToast("🧹 Results cleared!");
+  }
+
+  async function runSingleTest(index) {
+    showLoader(`Running: ${tests[index].test_name}`);
+
+    tests[index].status = "RUNNING...";
+    renderTable();
+
+    const token = document.getElementById("globalToken").value;
+    const publicKey = document.getElementById("publicKey").value;
+
+    const cleaned = { ...tests[index] };
+    delete cleaned.status;
+    delete cleaned.response;
+
+    const sendToken = cleaned.requires_token ? token : null;
+
+    const res = await fetch("/api/tests/run-one", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        test: cleaned,
+        token: sendToken,
+        publicKey
+      })
+    });
+
+    const json = await res.json();
+    hideLoader();
+
+    if (json.success) {
+      const testName = Object.keys(json.result)[0];
+      const testData = json.result[testName];
+
+      tests[index].status = testData.Result;
+      tests[index].response = JSON.stringify(testData.Response || testData.Error, null, 2);
+
+      results[index] = json.result;
+
+      if (testName === "Token Generation API--Success Cases") {
+        const newToken = testData?.Response?.data?.token;
+        if (newToken) {
+          document.getElementById("globalToken").value = newToken;
+          showToast("🔑 Token generated successfully!");
+        }
+      }
+
+      renderTable();
+      showToast(`✅ Test Completed: ${testName}`);
+    } else {
+      tests[index].status = "FAIL";
+      tests[index].response = json.error;
+      renderTable();
+      showToast("❌ Test Failed", true);
+    }
+  }
+
+  async function runAllTests() {
+    showLoader("Running all test cases...");
+
+    const publicKey = document.getElementById("publicKey").value;
+
+    if (!publicKey) {
+      hideLoader();
+      return showToast("❌ Public Key is required!", true);
+    }
+
+    const cleaned = tests.map(({ status, response, ...rest }) => rest);
+
+    const res = await fetch("/api/tests/run-all", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tests: cleaned, publicKey })
+    });
+
+    const json = await res.json();
+    hideLoader();
+
+    if (!json.success) {
+      return showToast("❌ Run all failed!", true);
+    }
+
+    results = json.results;
+
+    results.forEach((r, i) => {
+      const testName = Object.keys(r)[0];
+      const testData = r[testName];
+
+      tests[i].status = testData.Result;
+      tests[i].response = JSON.stringify(testData.Response || testData.Error, null, 2);
+    });
+
+    if (json.token) {
+      document.getElementById("globalToken").value = json.token;
+      showToast("🔑 Token generated and applied!");
+    }
+
+    renderTable();
+    showToast("✅ All tests executed successfully!");
+  }
+
+  async function exportDocx() {
+    if (!results.length) {
+      return showToast("❌ Run tests first before exporting DOCX", true);
+    }
+
+    showLoader("Exporting DOCX report...");
+
+    const res = await fetch("/api/tests/export-docx", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ results })
+    });
+
+    const json = await res.json();
+    hideLoader();
+
+    if (json.success) {
+      showToast("📄 DOCX Exported Successfully!");
+      window.open(`/download/${json.file}`, "_blank");
+    } else {
+      showToast("❌ DOCX Export Failed!", true);
+    }
+  }
+
+  async function logout() {
+    showLoader("Logging out...");
+
+    await fetch("/api/logout", { method: "POST" });
+
+    // clear localStorage after logout
+    localStorage.removeItem(STORAGE_TESTS);
+    localStorage.removeItem(STORAGE_RESULTS);
+    localStorage.removeItem(STORAGE_TOKEN);
+    localStorage.removeItem(STORAGE_PUBLICKEY);
+
+    hideLoader();
+    window.location.href = "/login";
+  }
+
+  async function init() {
+    loadFromLocalStorage();
+
+    // If no tests found in localStorage => load from backend
+    if (!tests.length) {
+      await syncFromBackend();
+    } else {
+      renderTable();
+      showToast("📌 Loaded from LocalStorage!");
+    }
+  }
+
+  init();
+</script>
+
+</body>
+</html>
